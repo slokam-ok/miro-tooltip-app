@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Miro Tooltip App</title>
+    <script defer src="app.js"></script>
+    <style>
+        /* Minimal inline styles */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Miro Tooltip App</h1>
+    <p>
+        Select a shape on your Miro board and provide its tooltip:
+    </p>
+    <form id="tooltipForm">
+        <label for="tooltipText">Tooltip Text (HTML supported):</label>
+        <textarea id="tooltipText" rows="3" cols="30"></textarea>
+        <br />
+        <label for="positionSelect">Position:</label>
+        <select id="positionSelect">
+            <option value="top">Top</option>
+            <option value="bottom">Bottom</option>
+            <option value="left">Left</option>
+            <option value="right">Right</option>
+        </select>
+        <br />
+        <button type="button" id="saveTooltipBtn">Save Tooltip</button>
+    </form>
+</body>
+</html>
