@@ -1,59 +1,37 @@
-miro.onReady(async () => {
-    const tooltipForm = document.getElementById('tooltipForm');
-    const tooltipText = document.getElementById('tooltipText');
-    const positionSelect = document.getElementById('positionSelect');
-    const saveTooltipBtn = document.getElementById('saveTooltipBtn');
+miro.onReady(() => {
+  console.log('App is ready!');
+  const appButton = document.getElementById('my-app-button');
+  appButton.addEventListener('click', async () => {
+    const selectedShapes = await miro.board.selection.get();  // Fetch selected shapes
+    console.log('Selected Shapes:', selectedShapes);
 
-    // Add event listener for saving tooltips
-    saveTooltipBtn.addEventListener('click', async () => {
-        const widgets = await miro.board.selection.get();
-        if (widgets.length !== 1) {
-            alert('Please select a single shape to set its tooltip.');
-            return;
-        }
-
-        const selectedWidget = widgets[0];
-        const tooltipContent = tooltipText.value.trim();
-        const tooltipPosition = positionSelect.value;
-
-        if (!tooltipContent) {
-            alert('Tooltip content cannot be empty!');
-            return;
-        }
-
-        // Save tooltip to widget metadata
-        await miro.board.widgets.update({
-            id: selectedWidget.id,
-            metadata: {
-                'tooltip-app': {
-                    text: tooltipContent,
-                    position: tooltipPosition,
-                },
-            },
-        });
-
-        alert('Tooltip saved successfully!');
-    });
-
-    // Listen for hover events on shapes
-    miro.board.ui.on('widget:mouseover', async (event) => {
-        const { data } = event;
-        const widgetId = data.id;
-        const widget = (await miro.board.widgets.get({ id: widgetId }))[0];
-
-        const tooltipData = widget.metadata?.['tooltip-app'];
-        if (tooltipData) {
-            const { text, position } = tooltipData;
-
-            miro.board.ui.openTooltip({
-                widgetId: widgetId,
-                content: text,
-                placement: position || 'top',
-            });
-        }
-    });
-
-    miro.board.ui.on('widget:mouseout', () => {
-        miro.board.ui.closeTooltip();
-    });
+    if (selectedShapes.length > 0) {
+      createTooltip(selectedShapes);
+    } else {
+      alert('Please select a shape first.');
+    }
+  });
 });
+
+function createTooltip(selectedShapes) {
+  selectedShapes.forEach(async (shape) => {
+    // Adjust the logic if it's a specific type of shape (like sticky notes)
+    const tooltipText = "Your tooltip text here."; // You can dynamically set this
+    const position = 'top';  // Customize tooltip position
+
+    // Create the tooltip (new sticky note as a tooltip)
+    try {
+      const tooltipWidget = await miro.board.widgets.create({
+        type: 'sticky_note',
+        text: tooltipText,
+        x: shape.x + 20,  // Offset to position it near the selected shape
+        y: shape.y - 50,  // Position the tooltip above the shape
+        width: 200,
+        height: 100,
+      });
+      console.log('Tooltip created:', tooltipWidget);
+    } catch (error) {
+      console.error('Error creating tooltip:', error);
+    }
+  });
+}
